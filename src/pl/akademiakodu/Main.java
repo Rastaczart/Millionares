@@ -2,32 +2,61 @@ package pl.akademiakodu;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-public class Main extends JFrame {
+import java.util.List;
+public class Main extends JFrame implements ActionListener {
 
 
 
     private JButton buttonYes;
     private JButton buttonNo;
     private JLabel labelQuestion;
+        //zmienna typu interfejsowego
+        // co oznacza, że musi to tej zmiennej przekazac klasę
+        // która będzie implementowała  interfejs  Question Generator
+        // mowimy ogolnie o typie, ale nie mowi konkretnie o klasie
+        // oidajemy kategorie do, której bedzie nalezec klasa
+    private QuestionGenerator questionGenerator;
+    private int currentQuestion = 0;
+
+    //lista pytań
+    private List<Question> questionList =new ArrayList<>();
+
+    public void setQuestionGenerator(QuestionGenerator questionGenerator) {
+        // ustawiamy zmienna z 21 linijki na tą, kktora jest podana w argumencie metody
+        this.questionGenerator = questionGenerator;
+        /*tutaj zakładamy że już mamy obiekt jakiejs klasy
+        na etapie pisania kody nie wiemy kompletnie jaka to bedzie klasa
+        tylko wiemy ze musi implementowac interfejs questiongenerator
+        wypelniamy liste pytaniami, ktore sa generowane za pomoca metody generateQuestions*/
+
+        questionList =questionGenerator.generateQuestions();
+    }
 
     public Main(){
-        super("Milionerzy");
-        setSize(500,500);
+        super("Milionerzy"); // ustawia tytul okna
+        setSize(500,500);// ustawie wielkosc okna
         setDefaultCloseOperation(1);//sprawia ze dziala przycisk exit
         setVisible(true);//
+        setQuestionGenerator(new SimpleQuestionGenerator());
+        //ustawiamy konkretna klase ktora bedzie generowac pytanie
+        // za pomoca New NazwaKlasy 
+
         buttonYes =new JButton("Tak");
         buttonNo =new JButton("Nie");
-        labelQuestion = new JLabel("Czy Polska leży w Europie",0);
+        buttonYes.addActionListener( this);
+        buttonNo.addActionListener( this);
+        labelQuestion = new JLabel(questionList.get(0).getContent(),0);
+
         add(labelQuestion);
         add(buttonYes);
         add(buttonNo);
         setLayout(new GridLayout(3,1));
    }
-
 
 
 
@@ -38,24 +67,17 @@ public class Main extends JFrame {
                 Main main = new Main();
             }
         });
-
-    List<Question> questionList =new ArrayList<>();
-    questionList.add(new Question("Czy Polska leży w europie",true));
-    questionList.add(new Question("Czy 2+5 =8",false));
-    questionList.add(new Question("czy 2^10=1024",true));
-    questionList.add(new Question("czy Chopin urodził się w Warszawie",false));
-    int numberOfPoints =0;
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Milionerzy: odpowiadaj tak bądź nie na pytanie");
-
-        for (Question question: questionList ){
-            System.out.println(question.getContent());
-            String answer = scanner.next();
-            if ((answer.equals("tak") && question.isCorrect())
-                    || (answer.equals("nie") && !question.isCorrect()))
-            { numberOfPoints++;
-            }
-        }
-        System.out.println("Zdobyłeś "+numberOfPoints);
     }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (questionList.size() > currentQuestion + 1) {
+            labelQuestion.setText(questionList.get(++currentQuestion).getContent());
+            System.out.println("Kliknięto mnie!");
+        } else
+            JOptionPane.showMessageDialog(this, "koniecQuizu");
+        buttonNo.setEnabled(false);
+        buttonYes.setEnabled(false);
+    }
+
+
 }
