@@ -1,6 +1,7 @@
 package pl.akademiakodu;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -21,17 +22,24 @@ public class Main extends JFrame {
         buttonYes =new JButton("Tak");
         buttonNo =new JButton("Nie");
         labelQuestion = new JLabel("Czy Polska leży w Europie",0);
+        add(labelQuestion);
         add(buttonYes);
         add(buttonNo);
-        add(labelQuestion);
-0   }
+        setLayout(new GridLayout(3,1));
+   }
 
 
 
 
     public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Main main = new Main();
+            }
+        });
+
     List<Question> questionList =new ArrayList<>();
-    Main main = new Main();
     questionList.add(new Question("Czy Polska leży w europie",true));
     questionList.add(new Question("Czy 2+5 =8",false));
     questionList.add(new Question("czy 2^10=1024",true));
