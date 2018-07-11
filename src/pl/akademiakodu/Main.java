@@ -22,6 +22,7 @@ public class Main extends JFrame implements ActionListener {
         // oidajemy kategorie do, której bedzie nalezec klasa
     private QuestionGenerator questionGenerator;
     private int currentQuestion = 0;
+    private int numberOfPoints = 0;
 
     //lista pytań
     private List<Question> questionList =new ArrayList<>();
@@ -39,25 +40,27 @@ public class Main extends JFrame implements ActionListener {
 
     public Main(){
         super("Milionerzy"); // ustawia tytul okna
-        setSize(500,500);// ustawie wielkosc okna
-        setDefaultCloseOperation(1);//sprawia ze dziala przycisk exit
-        setVisible(true);//
-        setQuestionGenerator(new SimpleQuestionGenerator());
-        //ustawiamy konkretna klase ktora bedzie generowac pytanie
-        // za pomoca New NazwaKlasy 
-
-        buttonYes =new JButton("Tak");
-        buttonNo =new JButton("Nie");
-        buttonYes.addActionListener( this);
-        buttonNo.addActionListener( this);
+        createDefaultComponents();
         labelQuestion = new JLabel(questionList.get(0).getContent(),0);
-
         add(labelQuestion);
         add(buttonYes);
         add(buttonNo);
         setLayout(new GridLayout(3,1));
    }
 
+    private void createDefaultComponents() {
+        setSize(500,500);// ustawie wielkosc okna
+        setDefaultCloseOperation(1);//sprawia ze dziala przycisk exit
+        setVisible(true);//
+        setQuestionGenerator(new SimpleQuestionGenerator());
+        //ustawiamy konkretna klase ktora bedzie generowac pytanie
+        // za pomoca New NazwaKlasy
+
+        buttonYes =new JButton("Tak");
+        buttonNo =new JButton("Nie");
+        buttonYes.addActionListener( this);
+        buttonNo.addActionListener( this);
+    }
 
 
     public static void main(String[] args) {
@@ -70,14 +73,27 @@ public class Main extends JFrame implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (questionList.size() > currentQuestion + 1) {
+        // kolejne pytanie musi się miesić w liście
+        if (currentQuestion < questionList.size()) {
+            JButton clikedButton = (JButton) e.getSource();
+            Question currentQuestion = questionList.get(this.currentQuestion);
+            if (clikedButton == buttonYes
+                    && currentQuestion.isCorrect()
+                    ) {
+                numberOfPoints++;
+            }
+            if (clikedButton == buttonNo
+                    && !currentQuestion.isCorrect()
+                    ) {
+                numberOfPoints++;
+            }
+        }
+        if (currentQuestion + 1 < questionList.size()) {
             labelQuestion.setText(questionList.get(++currentQuestion).getContent());
-            System.out.println("Kliknięto mnie!");
-        } else
-            JOptionPane.showMessageDialog(this, "koniecQuizu");
-        buttonNo.setEnabled(false);
-        buttonYes.setEnabled(false);
+        } else {
+            JOptionPane.showMessageDialog(this, "Koniec quizu zdobyłeś" + numberOfPoints + " punkty");
+            buttonNo.setEnabled(false);
+            buttonYes.setEnabled(false);
+        }
     }
-
-
 }
