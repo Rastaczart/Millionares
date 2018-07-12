@@ -52,7 +52,7 @@ public class Main extends JFrame implements ActionListener {
         setSize(500,500);// ustawie wielkosc okna
         setDefaultCloseOperation(1);//sprawia ze dziala przycisk exit
         setVisible(true);//
-        setQuestionGenerator(new SimpleQuestionGenerator());
+        setQuestionGenerator(new FileGenerator());
         //ustawiamy konkretna klase ktora bedzie generowac pytanie
         // za pomoca New NazwaKlasy
 
